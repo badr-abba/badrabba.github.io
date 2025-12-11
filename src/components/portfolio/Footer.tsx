@@ -17,12 +17,6 @@ export default function Footer() {
               {t({ fr: 'Tous droits réservés.', en: 'All rights reserved.' })}
             </span>
           </div>
-          
-          <div className="flex items-center gap-1 text-muted-foreground text-sm">
-            {t({ fr: 'Fait avec', en: 'Made with' })}
-            <Heart size={14} className="text-destructive fill-destructive" />
-            {t({ fr: 'au Maroc', en: 'in Morocco' })}
-          </div>
         </div>
       </div>
     </footer>
