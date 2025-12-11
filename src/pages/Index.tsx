@@ -1,99 +1,58 @@
-import { useState, useRef, useEffect } from "react";
-import { ParticleBackground } from "@/components/ParticleBackground";
-import { Navigation } from "@/components/Navigation";
-import { HeroSection } from "@/components/sections/HeroSection";
-import { AboutSection } from "@/components/sections/AboutSection";
-import { SkillsSection } from "@/components/sections/SkillsSection";
-import { ExperienceSection } from "@/components/sections/ExperienceSection";
-import { ProjectsSection } from "@/components/sections/ProjectsSection";
-import { ContactSection } from "@/components/sections/ContactSection";
+import { Helmet } from 'react-helmet-async';
+import { useLanguage } from '@/contexts/LanguageContext';
+import Navbar from '@/components/portfolio/Navbar';
+import Hero from '@/components/portfolio/Hero';
+import About from '@/components/portfolio/About';
+import Skills from '@/components/portfolio/Skills';
+import Experience from '@/components/portfolio/Experience';
+import Education from '@/components/portfolio/Education';
+import Projects from '@/components/portfolio/Projects';
+import Certifications from '@/components/portfolio/Certifications';
+import Contact from '@/components/portfolio/Contact';
+import Footer from '@/components/portfolio/Footer';
+import portfolioData from '@/data/portfolio.json';
 
-const sections = ["hero", "about", "skills", "experience", "projects", "contact"];
-
-const Index = () => {
-  const [activeSection, setActiveSection] = useState(0);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const handleScroll = () => {
-      const scrollLeft = container.scrollLeft;
-      const sectionWidth = window.innerWidth;
-      const newSection = Math.round(scrollLeft / sectionWidth);
-      setActiveSection(newSection);
-    };
-
-    container.addEventListener("scroll", handleScroll);
-    return () => container.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const navigateToSection = (index: number) => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    container.scrollTo({
-      left: index * window.innerWidth,
-      behavior: "smooth"
-    });
-  };
-
-  // Keyboard navigation
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "ArrowRight" && activeSection < sections.length - 1) {
-        navigateToSection(activeSection + 1);
-      } else if (e.key === "ArrowLeft" && activeSection > 0) {
-        navigateToSection(activeSection - 1);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [activeSection]);
+export default function Index() {
+  const { t } = useLanguage();
+  const { profile } = portfolioData;
 
   return (
-    <div className="relative overflow-hidden bg-background">
-      {/* Particle Background */}
-      <ParticleBackground />
+    <>
+      <Helmet>
+        <title>{profile.name} | {t(profile.role)}</title>
+        <meta name="description" content={t(profile.bio)} />
+        <meta name="keywords" content="Big Data, Cloud Computing, Data Science, DevOps, Portfolio, ABBA BADREDDINE" />
+        <meta name="author" content={profile.name} />
+        
+        {/* Open Graph */}
+        <meta property="og:title" content={`${profile.name} | ${t(profile.role)}`} />
+        <meta property="og:description" content={t(profile.bio)} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={profile.portfolio} />
+        
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`${profile.name} | ${t(profile.role)}`} />
+        <meta name="twitter:description" content={t(profile.bio)} />
+        
+        {/* Canonical */}
+        <link rel="canonical" href={profile.portfolio} />
+      </Helmet>
 
-      {/* Navigation */}
-      <Navigation
-        sections={sections}
-        activeSection={activeSection}
-        onNavigate={navigateToSection}
-      />
-
-      {/* Horizontal Scroll Container */}
-      <div
-        ref={containerRef}
-        className="horizontal-scroll h-screen"
-      >
-        <HeroSection />
-        <AboutSection />
-        <SkillsSection />
-        <ExperienceSection />
-        <ProjectsSection />
-        <ContactSection />
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <main>
+          <Hero />
+          <About />
+          <Skills />
+          <Experience />
+          <Education />
+          <Projects />
+          <Certifications />
+          <Contact />
+        </main>
+        <Footer />
       </div>
-
-      {/* Section indicator */}
-      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex gap-2">
-        {sections.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => navigateToSection(index)}
-            className={`w-2 h-2 rounded-full transition-all duration-300 ${
-              activeSection === index
-                ? "w-8 bg-gradient-to-r from-primary to-accent"
-                : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
-            }`}
-          />
-        ))}
-      </div>
-    </div>
+    </>
   );
-};
-
-export default Index;
+}
